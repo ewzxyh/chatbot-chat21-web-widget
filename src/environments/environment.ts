@@ -8,11 +8,21 @@ export const environment = {
   firebase: {
     apiKey: '[REDACTED_GOOGLE_KEY]',
     authDomain: '<your-project-authdomain>',
-    databaseURL: 'https://chat21-web.firebaseio.com',
-    projectId: 'chat21-web',
+    databaseURL: 'https://ionic3chat.firebaseio.com',
+    projectId: 'ionic3chat',
     storageBucket: '<your-storage-bucket>',
-    messagingSenderId: '680009090540'
-  }
+    messagingSenderId: '1096415488178'
+  },
+  // firebase: {
+  //   apiKey: '[REDACTED_GOOGLE_KEY]',
+  //   authDomain: '<your-project-authdomain>',
+  //   databaseURL: 'https://chat21-web.firebaseio.com',
+  //   projectId: 'chat21-web',
+  //   storageBucket: '<your-storage-bucket>',
+  //   messagingSenderId: '680009090540'
+  // },
+  tenant: 'chat21',
+  agentId: '7bqPekKF9mO1cKHPZgNbj0JmANE2'
 
   // firebase: {
   //   apiKey: '[REDACTED_GOOGLE_KEY]',
