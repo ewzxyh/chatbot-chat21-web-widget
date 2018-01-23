@@ -17,7 +17,7 @@ export const environment = {
   //   messagingSenderId: '680009090540'
   // },
   tenant: 'chat21',
-  agentId: '7bqPekKF9mO1cKHPZgNbj0JmANE2'
+  agentId: 'GZqvTSUmama1k6d6f0dHh0lQsrw2'
 
   // firebase: {
   //   apiKey: '[REDACTED_GOOGLE_KEY]',
