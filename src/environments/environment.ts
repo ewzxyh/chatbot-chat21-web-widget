@@ -6,12 +6,19 @@
 export const environment = {
   production: false,
   firebase: {
+    // apiKey: '[REDACTED_GOOGLE_KEY]',
+    // authDomain: '<your-project-authdomain>',
+    // databaseURL: 'https://ionic3chat.firebaseio.com',
+    // projectId: 'ionic3chat',
+    // storageBucket: '<your-storage-bucket>',
+    // messagingSenderId: '1096415488178'
+
     apiKey: '[REDACTED_GOOGLE_KEY]',
-    authDomain: '<your-project-authdomain>',
-    databaseURL: 'https://ionic3chat.firebaseio.com',
-    projectId: 'ionic3chat',
-    storageBucket: '<your-storage-bucket>',
-    messagingSenderId: '1096415488178'
+    authDomain: 'chat-v2-dev.firebaseapp.com',
+    databaseURL: 'https://chat-v2-dev.firebaseio.com',
+    projectId: 'chat-v2-dev',
+    storageBucket: 'chat-v2-dev.appspot.com',
+    messagingSenderId: '77360455507'
   },
   // firebase: {
   //   apiKey: '[REDACTED_GOOGLE_KEY]',
@@ -22,7 +29,7 @@ export const environment = {
   //   messagingSenderId: '680009090540'
   // },
   tenant: 'chat21',
-  agentId: 'GZqvTSUmama1k6d6f0dHh0lQsrw2'//7bqPekKF9mO1cKHPZgNbj0JmANE2'
+  agentId: '9EBA3VLhNKMFIVa0IOco82TkIzk1' // 'GZqvTSUmama1k6d6f0dHh0lQsrw2'//7bqPekKF9mO1cKHPZgNbj0JmANE2'
 
   // firebase: {
   //   apiKey: '[REDACTED_GOOGLE_KEY]',
