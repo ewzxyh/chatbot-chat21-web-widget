@@ -34,6 +34,7 @@ export class MessagingService {
   messages: Array<MessageModel>;
 
   observable: any;
+  obsCheckWritingMessages: BehaviorSubject<string>;
   // obsAdded: any;
   obsAdded: BehaviorSubject<MessageModel>;
   obsChanged: BehaviorSubject<MessageModel>;
@@ -47,6 +48,7 @@ export class MessagingService {
   channel_type: string;
   MONGODB_BASE_URL: string;
   departments: DepartmentModel[];
+  filterSystemMsg =  true;
 
 
   constructor(
@@ -55,9 +57,11 @@ export class MessagingService {
     public http: Http
   ) {
     // this.channel_type = CHANNEL_TYPE_GROUP;
-    this.MONGODB_BASE_URL = 'https://chat21-api-nodejs.herokuapp.com/app1/'; // 'http://api.chat21.org/app1/';
+    this.MONGODB_BASE_URL = 'http://api.chat21.org/app1/';
+    // 'https://chat21-api-nodejs.herokuapp.com/app1/'; // 'http://api.chat21.org/app1/';
     this.messages = new Array<MessageModel>();
     this.observable = new BehaviorSubject<MessageModel[]>(this.messages);
+    this.obsCheckWritingMessages = new BehaviorSubject<string>(null);
     this.obsAdded = new BehaviorSubject<MessageModel>(null);
     this.obsChanged = new BehaviorSubject<MessageModel>(null);
     this.obsRemoved = new BehaviorSubject<MessageModel>(null);
@@ -65,23 +69,23 @@ export class MessagingService {
   }
 
   /** */
-  eventChange(message, event) {
-    this.observable.next(this.messages);
-    if (event === 'ADDED') {
-      this.obsAdded.next(message);
-    } else if (event === 'CHANGED') {
-      this.obsChanged.next(message);
-    } else if (event === 'REMOVED') {
-      this.obsRemoved.next(message);
-    }
-  }
+  // eventChange(message, event) {
+  //   this.observable.next(this.messages);
+  //   if (event === 'ADDED') {
+  //     this.obsAdded.next(message);
+  //   } else if (event === 'CHANGED') {
+  //     this.obsChanged.next(message);
+  //   } else if (event === 'REMOVED') {
+  //     this.obsRemoved.next(message);
+  //   }
+  // }
 
   /**
    *
   */
   public initialize(user, tenant, channel_type) {
-    this.channel_type = channel_type;
     const that = this;
+    this.channel_type = channel_type;
     this.messages = [];
     this.loggedUser = user;
     this.senderId = user.uid;
@@ -104,6 +108,19 @@ export class MessagingService {
       .map((response) => response.json());
   }
 
+
+  // public getMongDbDepartments(): Observable<Department[]> {
+  //   const url = this.MONGODB_BASE_URL;
+  //   // const url = `http://localhost:3000/app1/departments/`;
+  //   // const url = `http://api.chat21.org/app1/departments/;
+  //   console.log('MONGO DB DEPARTMENTS URL', url);
+  //   const headers = new Headers();
+  //   headers.append('Content-Type', 'application/json');
+  //   headers.append('Authorization', this.TOKEN);
+  //   return this.http
+  //     .get(url, { headers })
+  //     .map((response) => response.json());
+  // }
   /**
    *
   */
@@ -117,25 +134,78 @@ export class MessagingService {
     return this.messagesRef.once('value');
   }
 
-  public checkWritingMessages(conversationWith): any {
-    this.conversationWith = conversationWith;
-    const that = this;
-    // /apps/tilechat/typings/<GROUP_ID>/<USER_ID> = 1
-    const urlNodeFirebase = '/apps/' + this.tenant + '/typings/' + conversationWith;
-    console.log('checkWritingMessages *****', urlNodeFirebase);
-    const firebaseMessages = firebase.database().ref(urlNodeFirebase);
-    const messagesRef = firebaseMessages.orderByChild('timestamp').limitToLast(1);
-    return messagesRef;
-//     var starCountRef = firebase.database().ref('posts/' + postId + '/starCount');
-// starCountRef.on('value', function(snapshot) {
 
+  public checkWritingMessages() {
+    const that = this;
+    const urlNodeFirebaseMembers = '/apps/' + this.tenant + '/users/' + this.senderId + '/groups/' + this.conversationWith + '/members';
+    console.log('urlNodeFirebaseMembers *****', urlNodeFirebaseMembers);
+    const firebaseGroup = firebase.database().ref(urlNodeFirebaseMembers)
+    .once('value').then(function(snapshot) {
+      // console.log('snapshot.val() *****', snapshot);
+      const resp = that.checkIsBot(snapshot);
+      that.obsCheckWritingMessages.next(resp);
+    });
   }
+
+  public deleteWritingMessages(sender) {
+    console.log('deleteWritingMessages *****', sender);
+    if (sender.startsWith('bot_')) {
+      this.obsCheckWritingMessages.next(null);
+    }
+  }
+
+  checkIsBot(snapshot) {
+    const that = this;
+    let RESP = null;
+    snapshot.forEach(
+      function(childSnapshot) {
+        const uid = childSnapshot.key;
+        console.log('childSnapshot *****', uid);
+        if (uid.startsWith('bot_')) {
+          RESP = uid;
+          return;
+        }
+      }
+    );
+    console.log('RESP:', RESP);
+    return RESP;
+  }
+
+//   public checkWritingMessages(conversationWith): any {
+//     this.conversationWith = conversationWith;
+//     const that = this;
+//     // /apps/tilechat/typings/<GROUP_ID>/<USER_ID> = 1
+//     const urlNodeFirebase = '/apps/' + this.tenant + '/typings/' + conversationWith;
+//     console.log('checkWritingMessages *****', urlNodeFirebase);
+//     const firebaseMessages = firebase.database().ref(urlNodeFirebase);
+//     const messagesRef = firebaseMessages.orderByChild('timestamp').limitToLast(1);
+//     return messagesRef;
+// //     var starCountRef = firebase.database().ref('posts/' + postId + '/starCount');
+// // starCountRef.on('value', function(snapshot) {
+//   }
+
+  checkMessage(message): boolean {
+    if (message.text.trim() === '') {
+      // se è un messaggio vuoto non fare nulla
+      return false;
+    }
+    if (message.sender === 'system' && this.filterSystemMsg && message.attributes['subtype'] !== 'info/support') {
+      // se è un msg inviato da system NON fare nulla
+      return false;
+    } else if (message && message.sender === this.senderId && message.type !== TYPE_MSG_TEXT) {
+        // se è un'immagine che ho inviato io NON fare nulla
+        // aggiorno la stato del messaggio e la data
+        // this.updateMessage(message);
+        return false;
+    }
+    return true;
+  }
+
 
   public listMessages(conversationWith) {
     const text_area = <HTMLInputElement>document.getElementById('chat21-main-message-context');
     // tslint:disable-next-line:curly
     if (text_area) text_area.focus();
-    let lastDate = '';
     const that = this;
     // this.conversationWith = conversationWith;
     // this.checkRemoveMember();
@@ -144,33 +214,36 @@ export class MessagingService {
 
     // CHANGED
     this.messagesRef.on('child_changed', function(childSnapshot) {
-        console.log('child_changed *****', childSnapshot.key);
-        const itemMsg = childSnapshot.val();
-        // imposto il giorno del messaggio per visualizzare o nascondere l'header data
-        const calcolaData = setHeaderDate(itemMsg['timestamp'], lastDate);
-        if (calcolaData != null) {
-            lastDate = calcolaData;
-        }
-        // const messageText = urlify(itemMsg['text']);
-        const messageText = itemMsg['text'];
-        // creo oggetto messaggio e lo aggiungo all'array dei messaggi
-        let attributes = '';
-        if (itemMsg['attributes']) {
-          attributes = itemMsg['attributes'];
-          console.log('attributes *****', itemMsg['attributes']);
-        }
-        // tslint:disable-next-line:max-line-length
-        const msg = new MessageModel(childSnapshot.key, itemMsg['language'], itemMsg['recipient'], itemMsg['recipient_fullname'], itemMsg['sender'], itemMsg['sender_fullname'], itemMsg['status'], itemMsg.metadata, messageText, itemMsg['timestamp'], calcolaData, itemMsg['type'], attributes);
-        const index = searchIndexInArrayForUid(that.messages, childSnapshot.key);
-        console.log('child_changed *****', index, that.messages, childSnapshot.key);
-        that.messages.splice(index, 1, msg);
-        // aggiorno stato messaggio
-        // questo stato indica che è stato consegnato al client e NON che è stato letto
-        that.setStatusMessage(childSnapshot, that.conversationWith);
-        // pubblico messaggio - sottoscritto in dettaglio conversazione
-        that.eventChange(msg, 'CHANGED');
-    });
+        const message = childSnapshot.val();
+        console.log('child_changed *****', childSnapshot.val());
+        if ( that.checkMessage(message) ) {
+          // imposto il giorno del messaggio
+          const dateSendingMessage = setHeaderDate(message['timestamp']);
 
+          const msg = new MessageModel(
+            childSnapshot.key,
+            message['language'],
+            message['recipient'],
+            message['recipient_fullname'],
+            message['sender'],
+            message['sender_fullname'],
+            message['status'],
+            message['metadata'],
+            message['text'],
+            message['timestamp'],
+            dateSendingMessage,
+            message['type'],
+            message['attributes']
+          );
+          const index = searchIndexInArrayForUid(that.messages, childSnapshot.key);
+          that.messages.splice(index, 1, msg);
+          console.log('child_changed *****', index, msg.uid);
+
+
+          // questo stato indica che è stato consegnato al client e NON che è stato letto
+          // that.setStatusMessage(childSnapshot, that.conversationWith);
+        }
+    });
 
     // REMOVED
     this.messagesRef.on('child_removed', function(childSnapshot) {
@@ -180,56 +253,37 @@ export class MessagingService {
         if (index > -1) {
           that.messages.splice(index, 1);
         }
-        that.eventChange(childSnapshot.key, 'REMOVED');
     });
-
 
     // ADDED
     this.messagesRef.on('child_added', function(childSnapshot) {
-      const itemMsg = childSnapshot.val();
-      console.log('child_added *****', itemMsg);
-      // imposto il giorno del messaggio per visualizzare o nascondere l'header data
-      const calcolaData = setHeaderDate(itemMsg['timestamp'], lastDate);
-      if (calcolaData != null) {
-        lastDate = calcolaData;
+      const message = childSnapshot.val();
+      console.log('child_added *****', childSnapshot.val());
+      if ( that.checkMessage(message) ) {
+        // imposto il giorno del messaggio
+        const dateSendingMessage = setHeaderDate(message['timestamp']);
+        const msg = new MessageModel(
+          childSnapshot.key,
+          message['language'],
+          message['recipient'],
+          message['recipient_fullname'],
+          message['sender'],
+          message['sender_fullname'],
+          message['status'],
+          message['metadata'],
+          message['text'],
+          message['timestamp'],
+          dateSendingMessage,
+          message['type'],
+          message['attributes']
+        );
+        console.log('child_added *****', dateSendingMessage, msg);
+        // azzero sto scrivendo
+        that.deleteWritingMessages(message['sender']);
+        that.messages.push(msg);
       }
-      // creo oggetto messaggio e lo aggiungo all'array dei messaggi
-      let messageText = '';
-      if (itemMsg.type === TYPE_MSG_IMAGE) {
-        console.log('itemMsg.type *****', itemMsg.metadata);
-        messageText = itemMsg['text'];
-      } else {
-        //messageText = urlify(itemMsg['text']);
-        messageText = itemMsg['text'];
-      }
-
-      try {
-        const index = searchIndexInArrayForUid(that.messages, itemMsg.metadata['uid']);
-        console.log('child_DELETE *****', index, that.messages, itemMsg.metadata['uid']);
-        if (index > -1) {
-          that.messages.splice(index, 1);
-        }
-      } catch (err) {
-        console.log('RIPROVO ::');
-      }
-
-      let attributes = '';
-      if (itemMsg['attributes']) {
-        attributes = itemMsg['attributes'];
-        console.log('attributes *****', itemMsg['attributes']);
-      }
-      // tslint:disable-next-line:max-line-length
-      const msg = new MessageModel(childSnapshot.key, itemMsg['language'], itemMsg['recipient'], itemMsg['recipient_fullname'], itemMsg['sender'], itemMsg['sender_fullname'], itemMsg['status'], itemMsg.metadata, messageText, itemMsg['timestamp'], calcolaData, itemMsg['type'], attributes);
-      console.log('child_added *****', calcolaData, that.messages, msg);
-      that.messages.push(msg);
-
-      that.eventChange(msg, 'ADDED');
     });
-
-
   }
-
-
 
   /**
    * arriorno lo stato del messaggio
