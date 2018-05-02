@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  build: '48',
   firebase: {
     apiKey: '[REDACTED_GOOGLE_KEY]',
     authDomain: 'chat-v2-dev.firebaseapp.com',
