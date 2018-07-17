@@ -99,7 +99,7 @@ export class MessagingService {
     // const url = `http://api.chat21.org/app1/departments`;
     // tslint:disable-next-line:max-line-length
     const TOKEN = 'JWT [REDACTED_JWT]';
-    console.log('MONGO DB DEPARTMENTS URL', url, TOKEN);
+    //console.log('MONGO DB DEPARTMENTS URL', url, TOKEN);
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', TOKEN);
