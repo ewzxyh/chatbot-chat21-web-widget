@@ -56,7 +56,9 @@ export class MessagingService {
     public http: Http
   ) {
     // this.channel_type = CHANNEL_TYPE_GROUP;
-    this.MONGODB_BASE_URL = 'https://chat21-api-nodejs.herokuapp.com/';
+    this.MONGODB_BASE_URL = 'https://api.tiledesk.com/v1/';
+    // this.MONGODB_BASE_URL = 'https://chat21-api-nodejs.herokuapp.com/';
+    
     // this.MONGODB_BASE_URL = 'http://api.chat21.org/';
     // this.MONGODB_BASE_URL = 'http://api.chat21.org/app1/';
     // 'https://chat21-api-nodejs.herokuapp.com/app1/'; // 'http://api.chat21.org/app1/';
@@ -98,11 +100,11 @@ export class MessagingService {
     const url = this.MONGODB_BASE_URL + projectId + '/departments/';
     // const url = `http://api.chat21.org/app1/departments`;
     // tslint:disable-next-line:max-line-length
-    const TOKEN = 'JWT [REDACTED_JWT]';
+    //const TOKEN = 'JWT [REDACTED_JWT]';
     //console.log('MONGO DB DEPARTMENTS URL', url, TOKEN);
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    headers.append('Authorization', TOKEN);
+    //headers.append('Authorization', TOKEN);
     return this.http
       .get(url, { headers })
       .map((response) => response.json());
@@ -199,7 +201,7 @@ export class MessagingService {
       // se è un messaggio vuoto non fare nulla
       return false;
     }
-    if (message.sender === 'system' && this.filterSystemMsg && message.attributes['subtype'] !== 'info/support') {
+    if (this.filterSystemMsg && message.attributes['subtype'] === 'info') {
       // se è un msg inviato da system NON fare nulla
       return false;
     } else if (message && message.sender === this.senderId && message.type !== TYPE_MSG_TEXT) {
