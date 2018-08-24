@@ -42,10 +42,10 @@ export class MessagingService {
 
   firebaseMessagesKey: any;
   // firebaseGroupMenbersRef: any;
-  conversationRef : any;
+  conversationRef: any;
   isWidgetActive: boolean;
   channel_type: string;
-  MONGODB_BASE_URL: string;
+  API_URL: string;
   departments: DepartmentModel[];
   filterSystemMsg =  true;
 
@@ -55,10 +55,17 @@ export class MessagingService {
     public starRatingWidgetService: StarRatingWidgetService,
     public http: Http
   ) {
+
+    this.API_URL = environment.apiUrl;
+
+    // console.log('MessagingService::this.API_URL',  this.API_URL );
+    if (!this.API_URL) {
+     throw new Error('apiUrl is not defined');
+    }
+
     // this.channel_type = CHANNEL_TYPE_GROUP;
-    this.MONGODB_BASE_URL = 'https://api.tiledesk.com/v1/';
+    // this.MONGODB_BASE_URL = 'https://api.tiledesk.com/v1/';
     // this.MONGODB_BASE_URL = 'https://chat21-api-nodejs.herokuapp.com/';
-    
     // this.MONGODB_BASE_URL = 'http://api.chat21.org/';
     // this.MONGODB_BASE_URL = 'http://api.chat21.org/app1/';
     // 'https://chat21-api-nodejs.herokuapp.com/app1/'; // 'http://api.chat21.org/app1/';
@@ -97,14 +104,14 @@ export class MessagingService {
   }
 
   public getMongDbDepartments(token, projectId): Observable<DepartmentModel[]> {
-    const url = this.MONGODB_BASE_URL + projectId + '/departments/';
+    const url = this.API_URL + projectId + '/departments/';
     // const url = `http://api.chat21.org/app1/departments`;
     // tslint:disable-next-line:max-line-length
-    //const TOKEN = 'JWT [REDACTED_JWT]';
-    //console.log('MONGO DB DEPARTMENTS URL', url, TOKEN);
+    // const TOKEN = 'JWT [REDACTED_JWT]';
+    // console.log('MONGO DB DEPARTMENTS URL', url, TOKEN);
     const headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    //headers.append('Authorization', TOKEN);
+    // headers.append('Authorization', TOKEN);
     return this.http
       .get(url, { headers })
       .map((response) => response.json());
@@ -132,7 +139,7 @@ export class MessagingService {
   */
   public checkListMessages(conversationWith): any {
     this.conversationWith = conversationWith;
-    this.checkRemoveMember();
+    this.checkRemoveConversation();
     const that = this;
     const firebaseMessages = firebase.database().ref(this.urlNodeFirebase + this.conversationWith);
     this.messagesRef = firebaseMessages.orderByChild('timestamp').limitToLast(100);
@@ -373,9 +380,6 @@ export class MessagingService {
       channel_type,
       projectid
     );
-
-    
-
     // const message = {
     //   uid: '',
     //   language: language,
@@ -489,7 +493,8 @@ export class MessagingService {
   //   // dopo aver aggiunto un messaggio al gruppo
   //   // mi sottoscrivo al nodo user/groups/ui-group/members
   //   // tslint:disable-next-line:max-line-length
-  //   const urlNodeFirebaseGroupMenbers  = '/apps/' + this.tenant + '/users/' + this.senderId + '/groups/' + this.conversationWith + '/members/';
+  // tslint:disable-next-line:max-line-length
+  // const urlNodeFirebaseGroupMenbers  = '/apps/' + this.tenant + '/users/' + this.senderId + '/groups/' + this.conversationWith + '/members/';
   //   // console.log('MI SOTTOSCRIVO A !!!!!', urlNodeFirebaseGroupMenbers);
   //   this.firebaseGroupMenbersRef = firebase.database().ref(urlNodeFirebaseGroupMenbers);
   //   this.firebaseGroupMenbersRef.on('child_removed', function(childSnapshot) {
@@ -501,7 +506,7 @@ export class MessagingService {
   //   });
   // }
 
-  private checkRemoveMember() {
+  private checkRemoveConversation() {
     const that = this;
     const urlConversation = '/apps/' + this.tenant + '/users/' + this.senderId + '/conversations/' + this.conversationWith;
     this.conversationRef = firebase.database().ref(urlConversation);
@@ -511,7 +516,7 @@ export class MessagingService {
   }
 
   private closeConversation() {
-    console.log("MessagingService::closeConversation::", "conversation closed");
+    console.log('MessagingService::closeConversation', 'conversation closed');
     // apro popup rating
     this.starRatingWidgetService.setOsservable(true);
   }
