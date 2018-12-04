@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
+
 // import { AngularFireDatabase } from 'angularfire2/database';
 // import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase';
@@ -32,6 +33,7 @@ export class MessagingService {
   messages: Array<MessageModel>;
 
   obsAdded: any;
+  obsAddedMsg: any;
   // observableWidgetActive: any;
 
   firebaseMessagesKey: any;
@@ -55,6 +57,7 @@ export class MessagingService {
       throw new Error('apiUrl is not defined');
     }
     this.obsAdded = new BehaviorSubject<MessageModel>(null);
+    //this.obsAddedMsg = new BehaviorSubject<string>(null);
     // this.observableWidgetActive = new BehaviorSubject<boolean>(this.isWidgetActive);
   }
 
@@ -65,6 +68,7 @@ export class MessagingService {
    */
   public getMongDbDepartments(projectId): Observable<DepartmentModel[]> {
     const url = this.API_URL + projectId + '/departments/';
+    this.g.wdLog(['***** getMongDbDepartments *****', url]);
     // const url = `http://api.chat21.org/app1/departments`;
     // tslint:disable-next-line:max-line-length
     // const TOKEN = 'JWT [REDACTED_JWT]';
@@ -172,6 +176,7 @@ export class MessagingService {
         } else {
            that.g.wdLog(['--------> ADD MSG', msg]);
           // se msg è inviato da me cambio status
+          //that.obsAddedMsg.next(text);
           that.messages.push(msg);
         }
         that.messages.sort(that.compareValues('timestamp', 'asc'));
@@ -290,9 +295,15 @@ export class MessagingService {
    *
    */
   sendMessage(senderFullname, msg, type, metadata, conversationWith, recipientFullname, attributes, projectid, channel_type) { // : string {
-     this.g.wdLog(['SEND MESSAGE: ', msg]);
+     this.g.wdLog(['SEND MESSAGE: ', msg, senderFullname, recipientFullname]);
      this.g.wdLog(['metadata:: ', metadata.toString()]);
     // const messageString = urlify(msg);
+    if (!senderFullname || senderFullname === '' ) {
+      senderFullname = 'Gest';
+    }
+    if (!recipientFullname || recipientFullname === '' ) {
+      recipientFullname = 'Gest';
+    }
     const that = this;
     // const now: Date = new Date();
     // const timestamp = now.valueOf();
@@ -354,7 +365,7 @@ export class MessagingService {
     const messageRef = conversationRef.push();
     const key = messageRef.key;
     message.uid = key;
-     this.g.wdLog(['messageRef: ', messageRef, key]);
+     this.g.wdLog(['messageRef: ', messageRef]);
     const messageForFirebase = message.asFirebaseMessage();
      this.g.wdLog(['messageForFirebase: ', messageForFirebase]);
     messageRef.set(messageForFirebase, function (error) {
