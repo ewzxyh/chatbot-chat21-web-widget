@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  remoteConfig: false,
+  remoteConfig: false, // for performance don't load settings from remote
   firebase: {
     apiKey: '[REDACTED_GOOGLE_KEY]',
     authDomain: 'chat-v2-dev.firebaseapp.com',
