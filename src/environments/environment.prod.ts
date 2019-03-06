@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  build: '48',
+  remoteConfig: false,
   firebase: {
     apiKey: '[REDACTED_GOOGLE_KEY]',
     authDomain: 'chat-v2-dev.firebaseapp.com',
@@ -11,6 +11,5 @@ export const environment = {
   },
   apiUrl: 'https://api.tiledesk.com/v1/',
   tenant: 'tilechat',
-  agentId: '-L4BtnkWGla_6w6QRZTj', // '9EBA3VLhNKMFIVa0IOco82TkIzk1'
   defaultLang : 'en'
 };
