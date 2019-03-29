@@ -63,7 +63,7 @@
         console.log("loadParams", event_data);
         console.log("window.tiledesk", window.tiledesk);
         
-        var httpRequest = createCORSRequest('GET', 'http://192.168.1.56:5000/',false); //set async to false because loadParams must return when the get is complete
+        var httpRequest = createCORSRequest('POST', '[REDACTED_BASIC_AUTH_URL]',false); //set async to false because loadParams must return when the get is complete
         if (!httpRequest) {
           throw new Error('CORS not supported');
         }
