@@ -129,6 +129,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
          */
         const obsLoggedUser = this.authService.obsLoggedUser.subscribe((user) => {
             this.ngZone.run(() => {
+                //console.log('obsLoggedUser ------------> ', user);
                 const autoStart = that.g.autoStart;
                 if (user === -2) {
                     /** ho fatto un reinit */
@@ -142,8 +143,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                     that.triggerIsLoggedInEvent();
                 } else if (user === 0) {
                     /** non sono loggato */
+                    that.g.wdLog(['NO CURRENT USER AUTENTICATE: ']);
                     that.g.setParameter('isLogged', false);
-                    that.g.wdLog(['NO CURRENT USER AUTENTICATE: ', user]);
                     if (autoStart === true) {
                         that.setAuthentication();
                     }
@@ -439,7 +440,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
      * authenticate in chat
      */
     private setAuthentication() {
-        this.g.wdLog([' ---------------- setAuthentication ---------------- ']);
+        console.log('---------------- setAuthentication ----------------');
+        // this.g.wdLog([' ---------------- setAuthentication ---------------- ']);
         /**
          * 0 - controllo se è stato passato email e psw
          *  SI - mi autentico con email e psw
@@ -456,7 +458,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.userId = 'LmBT2IKjMzeZ3wqyU8up8KIRB6J3';
         // tslint:disable-next-line:max-line-length
         // this.g.userToken = "[REDACTED_JWT]";
-        const currentUser = this.authService.getCurrentUser();
+
         const userEmail = this.g.userEmail;
         const userPassword = this.g.userPassword;
         const userId = this.g.userId;
@@ -477,15 +479,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.startNwConversation();
             this.startUI();
             this.g.wdLog([' 11 - IMPOSTO STATO CONNESSO UTENTE ']);
-            this.chatPresenceHandlerService.setupMyPresence(userId);
+            //this.chatPresenceHandlerService.setupMyPresence(userId);
         } else if (userToken) {
             // SE PASSO IL TOKEN NON EFFETTUO NESSUNA AUTENTICAZIONE
             // !!! DA TESTARE NON FUNZIONA !!! //
             this.g.wdLog([' ---------------- 12 ---------------- ']);
             this.g.wdLog(['this.g.userToken:: ', userToken]);
             this.authService.authenticateFirebaseCustomToken(userToken);
-        } else if (currentUser) {
+        } else if (this.authService.getCurrentUser()) {
             //  SONO GIA' AUTENTICATO
+            this.g.wdLog([' ---------------- 13 ---------------- ']);
+            const currentUser = this.authService.getCurrentUser();
             this.g.wdLog([' ---------------- 13 ---------------- ']);
             this.g.senderId = currentUser.uid;
             this.g.setParameter('senderId', currentUser.uid);
@@ -710,7 +714,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /** */
     private signInAnonymous() {
-         this.g.wdLog(['signInAnonymous ']);
+        this.g.wdLog(['signInAnonymous']);
         this.authService.authenticateFirebaseAnonymously();
     }
 
