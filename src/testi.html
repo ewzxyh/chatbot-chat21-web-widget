@@ -14,29 +14,28 @@
               // Handler for .ready() called.
               window.tiledeskSettings = 
               {
-                  projectid: "5b55e806c93dde00143163dd",//'5d022a9b8fb8450017c67a37', //
+                  projectid: "bot_conversation", //"5b55e806c93dde00143163dd",//'5d022a9b8fb8450017c67a37', //
                   persistence:"local",                /** local/session/none **/
-                  userEmail: "redacted@example.invalid",
-                  userPassword:"123456",
+                  // userEmail: "redacted@example.invalid",
+                  // userPassword:"123456",
                   // userToken: '[REDACTED_JWT]',
-                  // userId: "5b55e806c93dde00143163df", 
+                  userId: "dario_test_user_id", //"5b55e806c93dde00143163df", 
                   isLogEnabled: true,                     /** true/false **/
 
                   // preChatForm: true,
                   // calloutTimer:"1",
                   // calloutTitle:"calloutTitle",
                   // calloutMsg:"calloutMsg",
-                  // themeColor:"#cccccc",
-                  // themeForegroundColor:"#000000",
-                  // logoChat:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Coca-Cola_logo.svg/1280px-Coca-Cola_logo.svg.png",                  /** none/tiledesklogo/absolute url **/
-                  // wellcomeTitle:"wellcomeTitle",            /** string **/
-                  // wellcomeMsg:"wellcomeMsg",                /** string **/
+                  // themeColor:"#e20a16",
+                  // themeForegroundColor:"#ffffff",
+                  logoChat:"https://user-images.githubusercontent.com/9556761/64188450-bf255800-ce72-11e9-9485-20b31f626048.png",                  /** none/tiledesklogo/absolute url **/
+                  wellcomeTitle:"Servizio assistenza Comune di Bari",            /** string **/
+                  wellcomeMsg: " ",                /** string **/
                   // align: "left",                             /** left/right **/
                   
                   // development: true, // da verificare in tiledesk.js
                   // tenant: "tilechat2",
                   // recipientId: "support-group-Lhug32g57j5xyB7IgT4",
-                  
                   // widgetTitle: "widget Title Test",
                   // poweredBy: "poweredBy",
                   // userEmail: "redacted@example.invalid",
@@ -49,7 +48,7 @@
                   // marginY: "100px",
                   // fullscreenMode: true,
                   // hideHeaderCloseButton: true,
-                  allowTranscriptDownload: true,
+                  allowTranscriptDownload: false,
                   // startFromHome: false,                       /** true/false **/
                   // autoStart: false,                           /** true/false **/
                   // isShown: false,                             /** true/false **/
@@ -58,7 +57,8 @@
                   // showWaitTime: false,                        /** true/false **/
                   // showAvailableAgents: false,                 /** true/false **/
                   // showLogoutOption: false,                    /** true/false **/
-                  // showWidgetNameInConversation: true              
+                  // showWidgetNameInConversation: true   
+                  customAttributes: '{"agent": "supporto-anagrafe-vcqvkb", "recipient": "bari_bot", "recipient_fullname": "Ernesto"}'           
               };
         
               (function(d, s, id) {
