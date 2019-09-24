@@ -14,9 +14,9 @@ import { DepartmentModel } from '../../models/department';
 import { MessageModel } from '../../models/message';
 import { StarRatingWidgetService } from '../components/star-rating-widget/star-rating-widget.service';
 // tslint:disable-next-line:max-line-length
-import { MSG_STATUS_RECEIVED, TYPE_MSG_TEXT, UID_SUPPORT_GROUP_MESSAGES } from '../utils/constants';
+import { IMG_PROFILE_BOT, IMG_PROFILE_DEFAULT, MSG_STATUS_SENT_SERVER, MSG_STATUS_RECEIVED, TYPE_MSG_TEXT, UID_SUPPORT_GROUP_MESSAGES } from '../utils/constants';
 // utils
-import { searchIndexInArrayForUid, setHeaderDate, replaceBr } from '../utils/utils';
+import { getImageUrlThumb, searchIndexInArrayForUid, setHeaderDate, replaceBr } from '../utils/utils';
 import { Globals } from '../utils/globals';
 import { StorageService } from '../providers/storage.service';
 import { AppConfigService } from '../providers/app-config.service';
@@ -69,20 +69,20 @@ export class MessagingService {
    * da modificare e da spostare da qui!!!
    * chiamata da app component sull'init!!!
    */
-  public getMongDbDepartments(projectId): Observable<DepartmentModel[]> {
-    const url = this.API_URL + projectId + '/departments/';
-    this.g.wdLog(['***** getMongDbDepartments *****', url]);
-    // const url = `http://api.chat21.org/app1/departments`;
-    // tslint:disable-next-line:max-line-length
-    // const TOKEN = 'JWT [REDACTED_JWT]';
-    //  that.g.wdLog(['MONGO DB DEPARTMENTS URL', url, TOKEN);
-    const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    // headers.append('Authorization', TOKEN);
-    return this.http
-      .get(url, { headers })
-      .map((response) => response.json());
-  }
+  // public getMongDbDepartments(projectId): Observable<DepartmentModel[]> {
+  //   const url = this.API_URL + projectId + '/departments/';
+  //   this.g.wdLog(['***** getMongDbDepartments *****', url]);
+  //   // const url = `http://api.chat21.org/app1/departments`;
+  //   // tslint:disable-next-line:max-line-length
+  //   // const TOKEN = 'JWT [REDACTED_JWT]';
+  //   //  that.g.wdLog(['MONGO DB DEPARTMENTS URL', url, TOKEN);
+  //   const headers = new Headers();
+  //   headers.append('Content-Type', 'application/json');
+  //   // headers.append('Authorization', TOKEN);
+  //   return this.http
+  //     .get(url, { headers })
+  //     .map((response) => response.json());
+  // }
 
 
   /**
@@ -99,7 +99,8 @@ export class MessagingService {
   }
 
   /**
-   *
+   * genero un uid univoco
+   * da passare al servizio ogni volta che invio un msg
    */
   connect(conversationWith) {
     this.g.wdLog(['***** connect MessagingService *****']);
@@ -161,34 +162,66 @@ export class MessagingService {
           message['channel_type'],
           message['progectId']
         );
-        // azzero sto scrivendo
-        // that.deleteWritingMessages(message['sender']);
-        // notifico arrivo nuovo messaggio
-        //  that.g.wdLog(['NOTIFICO NW MSG *****', that.obsAdded);
-        // that.obsAdded.next(msg);
-        if (message && message.sender === that.senderId) {
-          // && message.type !== TYPE_MSG_TEXT) {
-          // sto aggiungendo un'immagine inviata da me!!!
-          // const index = searchIndexInArrayForUid(that.messages, childSnapshot.key);
-          // that.messages.splice(index, 1, msg);
-          const index = searchIndexInArrayForUid(that.messages, childSnapshot.key);
-          //  that.g.wdLog(['index *****', index, childSnapshot.key);
-          if (index < 0) {
-            that.g.wdLog(['--------> ADD MSG IMG', index, msg]);
-            msg.status = '150';
-            that.messages.push(msg);
-          }
-        } else {
-          // se msg è inviato da me cambio status
-          // that.obsAddedMsg.next(text);
-          msg.status = '150';
-          that.g.wdLog(['--------> ADD MSG', msg.status]);
-          that.messages.push(msg);
+
+        msg.sender_urlImage = that.getUrlImgProfile(message['sender']);
+        that.triggerGetImageUrlThumb(msg);
+        if (that.messages.indexOf(message) === -1) {
+          that.addMessage(msg);
         }
-        that.messages.sort(that.compareValues('timestamp', 'asc'));
-        that.obsAdded.next(msg);
+
       }
     });
+  }
+
+  /**
+   * recupero url immagine profilo
+   * @param uid
+   */
+  getUrlImgProfile(uid: string): string {
+    const baseLocation = this.g.baseLocation;
+    if (!uid || uid === 'system' ) {
+      return baseLocation + IMG_PROFILE_BOT;
+    } else if ( uid === 'error') {
+      return baseLocation + IMG_PROFILE_DEFAULT;
+    } else {
+      return getImageUrlThumb(uid);
+    }
+  }
+
+  private triggerGetImageUrlThumb(message: MessageModel) {
+    try {
+        const windowContext = this.g.windowContext;
+        const triggerGetImageUrlThumb = new CustomEvent('getImageUrlThumb', { detail: { message: message } });
+        if (windowContext.tiledesk && windowContext.tiledesk.tiledeskroot) {
+          windowContext.tiledesk.tiledeskroot.dispatchEvent(triggerGetImageUrlThumb);
+        }
+    } catch (e) {
+        console.error('Error triggering triggerAfterSendMessageEvent', e);
+    }
+  }
+
+  private addMessage(message) {
+    if (message && message.sender === this.senderId) {
+      const index = searchIndexInArrayForUid(this.messages, message.key);
+      if (index < 0) {
+        this.g.wdLog(['--------> ADD MSG IMG', index, message]);
+        message.status = MSG_STATUS_SENT_SERVER.toString();
+        this.messages.push(message);
+      }
+    } else {
+      message.status = MSG_STATUS_SENT_SERVER.toString();
+      this.g.wdLog(['--------> ADD MSG', message.status]);
+      console.log('--------> MSG ESISTE: ', this.messages.indexOf(message));
+      this.messages.push(message);
+    }
+
+    this.messages.sort(this.compareValues('timestamp', 'asc'));
+    this.obsAdded.next(message);
+    try {
+      this.storageService.setItem('messages', JSON.stringify(this.messages));
+    } catch (error) {
+      console.log('> Error is handled attributes: ', error);
+    }
   }
 
   /**
