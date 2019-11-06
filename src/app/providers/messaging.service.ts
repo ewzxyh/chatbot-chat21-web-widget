@@ -74,6 +74,7 @@ export class MessagingService {
   //   this.g.wdLog(['***** getMongDbDepartments *****', url]);
   //   // const url = `http://api.chat21.org/app1/departments`;
   //   // tslint:disable-next-line:max-line-length
+  // tslint:disable-next-line:max-line-length
   //   // const TOKEN = 'JWT [REDACTED_JWT]';
   //   //  that.g.wdLog(['MONGO DB DEPARTMENTS URL', url, TOKEN);
   //   const headers = new Headers();
@@ -162,13 +163,11 @@ export class MessagingService {
           message['channel_type'],
           message['progectId']
         );
-
         msg.sender_urlImage = that.getUrlImgProfile(message['sender']);
         that.triggerGetImageUrlThumb(msg);
         if (that.messages.indexOf(message) === -1) {
           that.addMessage(msg);
         }
-
       }
     });
   }
@@ -188,17 +187,6 @@ export class MessagingService {
     }
   }
 
-  private triggerGetImageUrlThumb(message: MessageModel) {
-    try {
-        const windowContext = this.g.windowContext;
-        const triggerGetImageUrlThumb = new CustomEvent('getImageUrlThumb', { detail: { message: message } });
-        if (windowContext.tiledesk && windowContext.tiledesk.tiledeskroot) {
-          windowContext.tiledesk.tiledeskroot.dispatchEvent(triggerGetImageUrlThumb);
-        }
-    } catch (e) {
-        console.error('Error triggering triggerAfterSendMessageEvent', e);
-    }
-  }
 
   private addMessage(message) {
     if (message && message.sender === this.senderId) {
@@ -213,6 +201,7 @@ export class MessagingService {
       this.g.wdLog(['--------> ADD MSG', message.status]);
       console.log('--------> MSG ESISTE: ', this.messages.indexOf(message));
       this.messages.push(message);
+      // this.triggerOnNewMessageReceived(message);
     }
 
     this.messages.sort(this.compareValues('timestamp', 'asc'));
@@ -220,7 +209,7 @@ export class MessagingService {
     try {
       this.storageService.setItem('messages', JSON.stringify(this.messages));
     } catch (error) {
-      console.log('> Error is handled attributes: ', error);
+      this.g.wdLog(['> Error :' + error]);
     }
   }
 
@@ -455,7 +444,7 @@ export class MessagingService {
     const key = UID_SUPPORT_GROUP_MESSAGES + newMessageRef.key;
     // sessionStorage.setItem(uid, key);
     this.g.wdLog(['setItem ************** UID:', uid, ' KWY: ', key]);
-    //this.storageService.setItem(uid, key);
+    // this.storageService.setItem(uid, key);
     this.conversationWith = key;
     return key;
   }
@@ -502,6 +491,24 @@ export class MessagingService {
     this.g.wdLog(['--------> messagesRef.off']);
     this.messagesRef.off();
     // this.conversationsRef.off('child_removed');
+  }
+
+
+  /** TRIGGERS */
+
+  /** */
+  private triggerGetImageUrlThumb(message: MessageModel) {
+    try {
+      const windowContext = this.g.windowContext;
+      const triggerGetImageUrlThumb = new CustomEvent('getImageUrlThumb', { detail: { message: message } });
+      if (windowContext.tiledesk && windowContext.tiledesk.tiledeskroot) {
+        windowContext.tiledesk.tiledeskroot.dispatchEvent(triggerGetImageUrlThumb);
+      } else {
+        // this.el.nativeElement.dispatchEvent(triggerGetImageUrlThumb);
+      }
+    } catch (e) {
+      this.g.wdLog(['> Error :' + e]);
+    }
   }
 
 }
