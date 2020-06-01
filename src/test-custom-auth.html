@@ -32,7 +32,7 @@
      
       window.tileDeskAsyncInit = function() {
        
-        window.tiledesk.on('loadParams', function(event_data) {
+        window.tiledesk.on('onLoadParams', function(event_data) {
           setTimeout(function() {
             // token PRE
             window.tiledesk.signInWithCustomToken("JWT [REDACTED_JWT]");
