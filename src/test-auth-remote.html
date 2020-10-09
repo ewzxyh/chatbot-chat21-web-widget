@@ -61,9 +61,7 @@
 
       window.tileDeskAsyncInit = function() {
       window.tiledesk.on('onLoadParams', function(event_data) {
-        console.log("2 - onLoadParams->");
         // console.log("window.tiledesk", window.tiledesk);
-        
         var httpRequest = createCORSRequest('POST', '[REDACTED_BASIC_AUTH_URL]',false); //set async to false because loadParams must return when the get is complete
         if (!httpRequest) {
           throw new Error('CORS not supported');
