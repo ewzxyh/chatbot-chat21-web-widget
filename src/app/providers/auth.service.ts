@@ -265,12 +265,12 @@ export class AuthService {
     this.g.firebaseToken = token;
     this.storageService.setItemWithoutProjectId('firebaseToken', token);
     const that = this;
-    // token = '[REDACTED_JWT]';
     firebase.auth().setPersistence(this.getFirebaseAuthPersistence()).then(function() {
       // Sign-out successful.
       that.g.wdLog(['2 - authService.signInWithCustomToken', token]);
       firebase.auth().signInWithCustomToken(token)
       .then(function(response) {
+        // console.log('-------------- signInWithCustomToken -------------------', response);
         that.g.setParameter('signInWithCustomToken', true);
         that.storageService.setItemWithoutProjectId('shemaVersion', environment.shemaVersion);
         that.user = response.user;
@@ -281,10 +281,11 @@ export class AuthService {
         that.obsLoggedUser.next(200);
       })
       .catch(function(error) {
+        // console.log('---------------------------------');
         const errorCode = error.code;
         const errorMessage = error.message;
         if (errorCode === 'auth/invalid-custom-token') {
-          alert('The token you provided is not valid.');
+          // alert('The token you provided is not valid.');
         } else {
           console.error(error);
         }
