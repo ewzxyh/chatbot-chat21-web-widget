@@ -149,7 +149,7 @@ export class AuthService {
   /** */
   authenticationWithCustomToken(tiledeskToken: string) {
     const that = this;
-    this.g.wdLog(['authenticationWithCustomToken: ']);
+    this.g.wdLog(['tiledeskToken::: ', tiledeskToken]);
     if (tiledeskToken) {
       this.createFirebaseToken(tiledeskToken, this.g.projectid)
       .subscribe(firebaseToken => {
@@ -261,12 +261,14 @@ export class AuthService {
 
   /** */
   authenticateFirebaseCustomToken(token) {
-    this.g.wdLog(['1 - authService.authenticateFirebaseCustomToken']);
+    this.g.wdLog(['1 - authService.authenticateFirebaseCustomToken', token]);
     this.g.firebaseToken = token;
     this.storageService.setItemWithoutProjectId('firebaseToken', token);
     const that = this;
+    // token = '[REDACTED_JWT]';
     firebase.auth().setPersistence(this.getFirebaseAuthPersistence()).then(function() {
       // Sign-out successful.
+      that.g.wdLog(['2 - authService.signInWithCustomToken', token]);
       firebase.auth().signInWithCustomToken(token)
       .then(function(response) {
         that.g.setParameter('signInWithCustomToken', true);
@@ -279,13 +281,18 @@ export class AuthService {
         that.obsLoggedUser.next(200);
       })
       .catch(function(error) {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          if (that.unsubscribe) {
-            that.unsubscribe();
-          }
-          that.g.wdLog(['authenticateFirebaseCustomToken ERROR: ', errorCode, errorMessage]);
-          that.signOut(-1);
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (errorCode === 'auth/invalid-custom-token') {
+          alert('The token you provided is not valid.');
+        } else {
+          console.error(error);
+        }
+        // if (that.unsubscribe) {
+        //   that.unsubscribe();
+        // }
+        // that.g.wdLog(['authenticateFirebaseCustomToken ERROR: ', error]);
+        // that.signOut(-1);
       });
     })
     .catch(function(error) {
