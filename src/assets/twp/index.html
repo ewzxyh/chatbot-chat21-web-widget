@@ -234,6 +234,8 @@
         window.tiledeskSettings = {
             marginX: "100px",
             marginY: "50px",
+            // autostart: false
+
         };
 
         (function(d, s, id) {
@@ -263,6 +265,17 @@
         window.Tiledesk('onLoadParams', function(event_data) {
             console.log("onLoadParams Tiledesk FN", event_data);
             window.tiledesk.open();
+            // window.tiledesk.signInWithCustomToken('JWT [REDACTED_JWT]')
+            //                 .then(response => console.log('signInWithCustomToken: user_logged -> ', response))
+            //                 .catch((error)=> console.error('signInWithCustomToken: error', error))
+        });
+        
+        window.Tiledesk('onAuthStateChanged', function(event_data) {
+        	console.log("AUTHENTICATED!", event_data);
+       		// if(event_data.detail.isLogged){
+            // 	console.log("isLogged!!!!", event_data);
+            // 	window.Tiledesk('show')
+            // }
         });
     </script>
 
