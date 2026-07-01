@@ -83,12 +83,12 @@
       /* star-rating */
       .default-title {
         font-size: 2em;
-        font-family:'Roboto';
+        font-family: var(--font-geist-sans);
         color:$black;
       }
       .default-text {
         font-size: 1.4em;
-        font-family:'Roboto';
+        font-family: var(--font-geist-sans);
         // line-height: 1.2em;
         color:$black;
         margin: 0 0 4px 0;

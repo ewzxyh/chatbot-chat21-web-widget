@@ -366,7 +366,7 @@ export class Globals {
     /** set the text color of bubble received message */
     this.fontSize = '1.4em'
     /** set the text size of bubble messages */
-    this.fontFamily = "'Roboto','Google Sans', Helvetica, Arial, sans-serif'"
+    this.fontFamily = "'Geist Sans', Roboto, Helvetica, Arial, sans-serif"
     /** set the text family of bubble messages */
     this.buttonFontSize = '15px'
     /** set the text size of attachment-buttons */

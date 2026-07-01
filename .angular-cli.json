@@ -38,7 +38,8 @@
       "styles": [
         "sass/styles.scss",
         "./../node_modules/bootstrap/dist/css/bootstrap.min.css",
-        "assets/css/material-dashboard.css"
+        "assets/css/material-dashboard.css",
+        "assets/css/geist-fonts.css"
       ],
       "scripts": [
         "assets/js/mqtt/4.2.6/mqtt.min.js",
