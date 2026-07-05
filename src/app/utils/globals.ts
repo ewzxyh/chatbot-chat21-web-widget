@@ -27,9 +27,9 @@ export class Globals {
   BASE_LOCATION = 'https://widget.tiledesk.com/v2';
   // POWERED_BY = '<a tabindex="-1" target="_blank" href="http://www.tiledesk.com/">Powered by <b>TileDesk</b></a>';
   
-  POWERED_BY ='<a tabindex="-1" target="_blank" href="http://www.tiledesk.com/"><span>POWERED BY</span> <img src="https://support-pre.tiledesk.com/dashboard/assets/img/logos/tiledesk-logo.svg"/></a>'
-  DEFAULT_LOGO_CHAT = '/assets/images/tiledesk_logo_white_small.png';
-  WIDGET_TITLE = 'Tiledesk';
+  POWERED_BY ='<a tabindex="-1" target="_blank" href="https://chatcase.com.br/"><span>POWERED BY</span> <b>ChatCase</b></a>'
+  DEFAULT_LOGO_CHAT = '/assets/images/chatcase-icon.svg';
+  WIDGET_TITLE = 'ChatCase';
 
   // private parameters = {};
   // private default_settings;
@@ -370,11 +370,11 @@ export class Globals {
     /** set the text family of bubble messages */
     this.buttonFontSize = '15px'
     /** set the text size of attachment-buttons */
-    this.buttonBackgroundColor = convertColorToRGBA('#ffffff', 100)
+    this.buttonBackgroundColor = convertColorToRGBA('#2a6ac1', 100)
     /** set the backgroundColor of attachment-buttons */
-    this.buttonTextColor = convertColorToRGBA('#2a6ac1', 100)
+    this.buttonTextColor = convertColorToRGBA('#ffffff', 100)
     /** set the text color of attachment-buttons */
-    this.buttonHoverBackgroundColor = convertColorToRGBA('#2a6ac1', 100)
+    this.buttonHoverBackgroundColor = convertColorToRGBA('#1f5cab', 100)
     /** set the text size of attachment-buttons */
     this.buttonHoverTextColor = convertColorToRGBA('#ffffff', 100);
     /** set the text size of attachment-buttons */
