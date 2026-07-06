@@ -14,8 +14,29 @@
         @-ms-keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* IE */
         @keyframes blink {0%{opacity:1;} 50%{opacity:0;} 100%{opacity:1;}} /* Opera and prob css3 final iteration */
 
+        @font-face {
+            font-family: 'Geist Sans';
+            src: url('../fonts/geist/Geist-Variable.woff2') format('woff2');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Geist Mono';
+            src: url('../fonts/geist/GeistMono-Variable.woff2') format('woff2');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
         body{
-            --font-family-poppins: 'Poppins', 'Roboto', Arial, sans-serif;
+            --font-family-poppins: 'Geist Sans', 'Poppins', 'Roboto', Arial, sans-serif;
             --blu: #2a6ac1;
             --gray-light-02: rgb(223, 227, 237);
             --base-company-logo: #2a6ac1;
@@ -113,7 +134,7 @@
             top: 60%;
             left: 50%;
             transform: translateX(-50%);
-            font-family: sans-serif;
+            font-family: var(--font-family-poppins);
             font-size: 18px;
             color: #2a6ac1;
             animation: blinkText 1.5s infinite ease-in-out;
@@ -135,7 +156,7 @@
 
         body {
             background-color: #ffffff !important; /*#f4f5f5 !important;*/
-            font-family: Roboto, "Helvetica Neue", sans-serif;
+            font-family: var(--font-family-poppins);
             font-weight: 300;
             overflow: hidden;
         }
