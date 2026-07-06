@@ -17,6 +17,12 @@ function ready(callbackFunction){
        
 
 /** */
+function getCacheSuffix() {
+    var settings = window.tiledeskSettings || {};
+    return settings.cacheVersion ? '?v=' + encodeURIComponent(settings.cacheVersion) : '';
+}
+
+/** */
 function loadIframe(tiledeskScriptBaseLocation) {
 
     var containerDiv = document.createElement('div');
@@ -42,11 +48,12 @@ function loadIframe(tiledeskScriptBaseLocation) {
     srcTileDesk += '</head>';
     srcTileDesk += '<body>';
     srcTileDesk += '<chat-root></chat-root>';
-    srcTileDesk += '<script type="text/javascript" src="'+tiledeskScriptBaseLocation+'/inline.bundle.js"></script>';
-    srcTileDesk += '<script type="text/javascript" src="'+tiledeskScriptBaseLocation+'/polyfills.bundle.js"></script>';
-    srcTileDesk += '<script type="text/css" src="'+tiledeskScriptBaseLocation+'/styles.bundle.css"></script>';
-    srcTileDesk += '<script type="text/javascript" src="'+tiledeskScriptBaseLocation+'/vendor.bundle.js"></script>';
-    srcTileDesk += '<script type="text/javascript" src="'+tiledeskScriptBaseLocation+'/main.bundle.js"></script>';
+    var cacheSuffix = getCacheSuffix();
+    srcTileDesk += '<script type="text/javascript" src="'+tiledeskScriptBaseLocation+'/inline.bundle.js'+cacheSuffix+'"></script>';
+    srcTileDesk += '<script type="text/javascript" src="'+tiledeskScriptBaseLocation+'/polyfills.bundle.js'+cacheSuffix+'"></script>';
+    srcTileDesk += '<link rel="stylesheet" href="'+tiledeskScriptBaseLocation+'/styles.bundle.css'+cacheSuffix+'">';
+    srcTileDesk += '<script type="text/javascript" src="'+tiledeskScriptBaseLocation+'/vendor.bundle.js'+cacheSuffix+'"></script>';
+    srcTileDesk += '<script type="text/javascript" src="'+tiledeskScriptBaseLocation+'/main.bundle.js'+cacheSuffix+'"></script>';
     srcTileDesk += '</body>';
     srcTileDesk += '</html>';
     
@@ -275,7 +282,7 @@ function initWidget() {
     //setInterval(function(){
         //tiledeskScriptLocation = currentScript.src;
         // console.log(tiledeskScriptLocation)
-        var tiledeskScriptBaseLocation = tiledeskScriptLocation.replace("/launch.js","");
+        var tiledeskScriptBaseLocation = tiledeskScriptLocation.split('?')[0].replace("/launch.js","");
         window.tiledesk = new function() {
             //this.type = "macintosh";
             this.tiledeskroot = tiledeskroot;
@@ -319,7 +326,7 @@ function initCSSWidget(tiledeskScriptBaseLocation) {
         link.id   = cssId;
         link.rel  = 'stylesheet';
         link.type = 'text/css';
-        link.href = tiledeskScriptBaseLocation+'/iframe-style.css';
+        link.href = tiledeskScriptBaseLocation+'/iframe-style.css' + getCacheSuffix();
         link.media = 'all';
         head.appendChild(link);
     // }

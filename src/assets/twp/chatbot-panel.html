@@ -536,6 +536,7 @@
             // autostart: false
 
         };
+        window.tiledeskSettings.cacheVersion = new URLSearchParams(window.location.search).get('tiledesk_widget_v') || Date.now().toString();
 
         (function(d, s, id) {
             var w=window; var d=document;
@@ -550,7 +551,7 @@
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;
             js = d.createElement(s); 
-            js.id = id; js.async = true; js.src = "../../launch.js";
+            js.id = id; js.async = true; js.src = "../../launch.js?v=" + encodeURIComponent(window.tiledeskSettings.cacheVersion);
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'tiledesk-jssdk'));
         
