@@ -31,12 +31,9 @@ class Chat21Client {
                 }
                 var loc = window.location, new_uri;
                 if (loc.protocol === "https:") {
-                    // new_uri = "wss:";
-                    new_uri = "mqtt:";
-                    
+                    new_uri = "wss:";
                 } else {
-                    // new_uri = "ws:";
-                    new_uri = "mqtt:";
+                    new_uri = "ws:";
                 }
                 new_uri += "//" + loc.host;
                 // new_uri += loc.pathname + "/to/ws";
