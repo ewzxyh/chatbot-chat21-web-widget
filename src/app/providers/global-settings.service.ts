@@ -687,7 +687,10 @@ export class GlobalSettingsService {
         TEMP = tiledeskSettings['fullscreenMode'];
         // this.logger.debug('[GLOBAL-SET] setVariablesFromSettings > fullscreenMode:: ', TEMP);
         if (TEMP !== undefined) {
-            globals.fullscreenMode = TEMP;
+            globals.fullscreenMode = (TEMP === true || TEMP === 'true') ? true : false;
+            if (globals.fullscreenMode) {
+                globals.isOpen = true;
+            }
             // globals.setParameter('fullscreenMode', TEMP);
         }
         TEMP = tiledeskSettings['hideHeaderCloseButton'];
@@ -1381,6 +1384,9 @@ export class GlobalSettingsService {
         TEMP = getParameterByName(windowContext, 'tiledesk_fullscreenMode');
         if (TEMP) {
             globals.fullscreenMode = stringToBoolean(TEMP);
+            if (globals.fullscreenMode) {
+                globals.isOpen = true;
+            }
         }
 
         TEMP = getParameterByName(windowContext, 'tiledesk_customAttributes');
