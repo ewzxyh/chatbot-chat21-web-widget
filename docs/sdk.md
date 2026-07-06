@@ -27,7 +27,7 @@ Copy the following script and insert it in the HTML source between the HEAD tags
 
 To get your TILEDESK_PROJECT_ID go to the TileDesk Dashboard and click on the Widget item of the menu:
 
-<img src="https://raw.githubusercontent.com/chat21/chat21-web-widget/master/docs/tiledesk-dashboard-widget-screenshots.png"/>
+<img src="https://raw.githubusercontent.com/chat21/chat21-web-widget/master/docs/chatcase-dashboard-widget-screenshots.png"/>
 
 
 

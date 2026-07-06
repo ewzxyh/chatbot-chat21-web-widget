@@ -74,7 +74,7 @@ export class ConversationContentComponent implements OnInit {
     'hide-delay': 200
   };
 
-  urlBOTImage = 'https://s3.eu-west-1.amazonaws.com/tiledesk-widget/dev/2.0.4-beta.7/assets/images/avatar_bot_tiledesk.svg'
+  urlBOTImage = 'assets/images/avatar_bot_chatcase.svg'
   uploadProgress: number;
   showUploadProgress: boolean = false;
   fileType: string;
