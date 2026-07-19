@@ -132,10 +132,26 @@ function loadIframe(tiledeskScriptBaseLocation) {
         const tiledeskToken = window.tiledesk.angularcomponent.component.g.tiledeskToken;
         // console.log(">>>> tiledeskToken >>>> ",event_data.detail.appConfigs.apiUrl+event_data.detail.default_settings.projectid);
         if(tiledeskToken) {
+          const participantsParam = new URLSearchParams(window.location.search).get('tiledesk_participants');
+          const participants = participantsParam
+            ? participantsParam.split(',').filter(function(participant) { return /^bot_[a-f\d]{24}$/i.test(participant); })
+            : [];
+          const attributes = {
+            "request_id":event_data.detail.newConvId,
+            "department":event_data.detail.global.departmentSelected.id,
+            "language":event_data.detail.global.lang,
+            "subtype":"info",
+            "fullname":event_data.detail.global.attributes.userFullname,
+            "email":event_data.detail.global.attributes.userEmail,
+            "attributes":event_data.detail.global.attributes
+          };
+          if (participants.length > 0) {
+            attributes.participants = participants;
+          }
           var httpRequest = createCORSRequest('POST', event_data.detail.appConfigs.apiUrl+event_data.detail.default_settings.projectid+'/events',true); //set async to false because loadParams must return when the get is complete
           httpRequest.setRequestHeader('Content-type', 'application/json');
           httpRequest.setRequestHeader('Authorization',tiledeskToken);
-          httpRequest.send(JSON.stringify({"name":"new_conversation","attributes": {"request_id":event_data.detail.newConvId, "department": event_data.detail.global.departmentSelected.id, "language": event_data.detail.global.lang, "subtype":"info", "fullname":event_data.detail.global.attributes.userFullname, "email":event_data.detail.global.attributes.userEmail, "attributes":event_data.detail.global.attributes}}));
+          httpRequest.send(JSON.stringify({"name":"new_conversation","attributes": attributes}));
         }
     });
 
